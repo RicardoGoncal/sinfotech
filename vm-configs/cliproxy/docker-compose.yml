@@ -3,12 +3,9 @@ services:
     image: eceasy/cli-proxy-api:latest
     restart: unless-stopped
     ports:
-      - "8317"                      # o Coolify roteia o dominio pra ca (Traefik + HTTPS)
+      - "8317"                      # API/proxy - o Coolify roteia o dominio pra ca (Traefik + HTTPS)
+      - "8765:8765"                 # porta de callback OAuth p/ login (usada so via tunel SSH, NUNCA exposta ao publico)
     volumes:
-      # Bind mount de ARQUIVO UNICO, caminho fixo no host (fora do checkout git,
-      # sobrevive a redeploys). Crie esse arquivo uma vez via SSH:
-      #   sudo mkdir -p /data/coolify-apps/cliproxy
-      #   sudo nano /data/coolify-apps/cliproxy/config.yaml
       - /data/coolify-apps/cliproxy/config.yaml:/CLIProxyAPI/config.yaml
       - cliproxy-auth:/root/.cli-proxy-api   # PERSISTE os logins entre deploys
       - cliproxy-logs:/CLIProxyAPI/logs
