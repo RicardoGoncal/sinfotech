@@ -1,0 +1,85 @@
+global:
+  # Substitua pelo subdomínio que você vai configurar no Cloudflare
+  domain: argocd.sinfotechs.cloud
+
+server:
+  # Alta disponibilidade usando os 2 nós disponíveis
+  replicas: 2
+  
+  # ESSENCIAL PARA O CLOUDFLARE TUNNEL: 
+  # Desativa o TLS interno para que o Cloudflare gerencie o certificado
+  insecure: true
+  extraArgs:
+    - --insecure
+    
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+repoServer:
+  # O repo-server é quem faz o clone do Git e processa os manifestos. 2 réplicas para HA.
+  replicas: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 250m
+      memory: 512Mi
+
+applicationController:
+  # O Controller roda melhor como Single-Instance sem configurações complexas de sharding
+  replicas: 1 
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+
+redis:
+  # Mantemos o Redis standalone. 
+  # O Redis-HA (Sentinel) exige 3 nós para formar quorum, e temos 2 nós na infraestrutura.
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+dex:
+  # Habilitado para plugar SSO (GitHub, Google, Azure) futuramente e aposentar o admin local
+  enabled: true 
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+applicationSet:
+  # A engrenagem do modelo "App of Apps". Ele automatiza a criação de aplicações.
+  enabled: true 
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+configs:
+  cm:
+    # Ajustes finos de comportamento
+    timeout.reconciliation: 180s # Evita sobrecarregar o GitHub com polling constante
+    exec.enabled: "true"         # Permite abrir um Web Terminal dentro dos pods pela UI do ArgoCD
+    admin.enabled: "true"        # Mantém a conta 'admin' ativa por enquanto

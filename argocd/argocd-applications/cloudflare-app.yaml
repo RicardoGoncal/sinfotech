@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudflared
+  namespace: argocd # Aplicações do Argo sempre moram no namespace dele
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/SEU_USUARIO/sinfotech.git' # Altere aqui!
+    targetRevision: HEAD
+    path: argocd/cloudflare # Aponta exatamente para a pasta do seu print
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: cloudflared # Namespace onde os pods vão rodar
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
