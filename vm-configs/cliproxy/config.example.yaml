@@ -1,0 +1,33 @@
+# =====================================================================
+# CLIProxyAPI - EXEMPLO (modo LOGIN/OAuth, sem API key)
+# https://github.com/router-for-me/CLIProxyAPI
+# Uso: cp config.example.yaml config.yaml  e preencha os segredos.
+# config.yaml esta no .gitignore.
+# =====================================================================
+
+host: ""            # "" = todas as interfaces (dentro do container)
+port: 8317
+tls:
+  enable: false     # o Traefik do Coolify cuida do HTTPS na frente
+
+# Onde ficam os tokens de login (Gemini/Codex/Claude/Qwen...).
+# ESTE path e montado como VOLUME PERSISTENTE no Coolify.
+auth-dir: "/root/.cli-proxy-api"
+
+# Chave que OS CLIENTES usam pra chamar o proxy (protege o endpoint).
+api-keys:
+  - "TROQUE-POR-UMA-CHAVE-FORTE"
+
+# Painel de gerenciamento: e por aqui que voce faz o LOGIN de cada IA.
+remote-management:
+  allow-remote: true                 # necessario pra acessar o painel pelo dominio
+  secret-key: "TROQUE-POR-OUTRA-CHAVE"
+  disable-control-panel: false
+
+# Roteamento / robustez
+routing:
+  strategy: "round-robin"
+  session-affinity: false
+request-retry: 3
+debug: false
+logging-to-file: false

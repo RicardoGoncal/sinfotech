@@ -1,0 +1,66 @@
+# ===================== Terraform =====================
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+
+# Arquivos de variaveis (contem OCIDs, caminhos de chave, IPs) - NAO versionar
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Overrides locais
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+# Obs: .terraform.lock.hcl DEVE ser versionado (trava versao dos providers)
+
+# ===================== Chaves e segredos =====================
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+.env
+.env.*
+!.env.example
+*credentials*
+s3_credentials
+
+# ============ Backups / dumps do Coolify (APP_KEY, senhas, dados) ============
+*.sql
+*.dump
+*.tar.gz
+*.tgz
+*.zip
+
+# ===================== Backups de edicao =====================
+*.bak
+*.orig
+
+# ===================== Ansible =====================
+*.retry
+# inventory.ini so tem IP publico hoje; descomente se um dia colocar credencial:
+# inventory.ini
+
+# ============ CLIProxyAPI (tokens/keys das IAs) ============
+vm-configs/cliproxy/config.yaml
+vm-configs/cliproxy/auth/
+vm-configs/cliproxy/auths/
+*.token.json
+
+# ===================== OS / editores =====================
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

@@ -1,0 +1,25 @@
+---
+- name: Configurar Servidor e Instalar Coolify
+  hosts: coolify
+  become: yes # Executa tudo como root (sudo)
+  
+  tasks:
+    - name: Atualizar cache do APT e pacotes do sistema (Isso pode levar uns 2 minutos)
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Instalar dependências básicas
+      apt:
+        name: 
+          - curl
+          - wget
+          - git
+          - jq
+        state: present
+
+    - name: Instalar Coolify (Docker e Compose serão instalados automaticamente)
+      shell: curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+      args:
+        # Essa linha impede que o Ansible reinstale o Coolify se você rodar o script de novo no futuro
+        creates: /data/coolify/source/docker-compose.yml
