@@ -176,8 +176,6 @@ Com a base instalada, novos recursos podem ser adicionados rapidamente:
 
 ---
 
-teste ruleset
-
 ## 🔒 Segurança
 
 - **Firewall e Security Lists:** Apenas as portas estritamente necessárias (`22`, `80`, `443`, `8000`, `8317`) devem ser expostas na OCI.
