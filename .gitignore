@@ -47,10 +47,27 @@ s3_credentials
 *.bak
 *.orig
 
+# ===================== OCI & Cloud SDKs =====================
+oci_api_key*
+oci_api_key*.pem
+.oci/
+
 # ===================== Ansible =====================
 *.retry
+.vault_pass
+.vault_pass*
+*.vault
 # inventory.ini so tem IP publico hoje; descomente se um dia colocar credencial:
 # inventory.ini
+
+# ===================== Logs =====================
+*.log
+logs/
+**/logs/
+
+# ===================== Docker / Compose =====================
+.docker/
+docker-compose.override.yml
 
 # ============ CLIProxyAPI (tokens/keys das IAs) ============
 vm-configs/cliproxy/config.yaml
