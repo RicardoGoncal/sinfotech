@@ -1,8 +1,6 @@
 ﻿services:
   prometheus:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: prom/prometheus:latest
     container_name: prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -12,6 +10,7 @@
       - '--web.enable-lifecycle'
     volumes:
       - prometheus-data:/prometheus
+      - prometheus-config:/etc/prometheus
     restart: unless-stopped
 
   grafana:
@@ -25,4 +24,5 @@
 
 volumes:
   prometheus-data:
+  prometheus-config:
   grafana-data:
