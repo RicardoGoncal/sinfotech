@@ -143,9 +143,17 @@ Para importar no Grafana: va em **Dashboards** > **New** > **Import**, informe o
 
 ### 2. Dashboard de Containers e Projetos do Coolify
 - **ID sugerido**: `14282` ou `893` (Docker cAdvisor)
-- **Golden Metrics por container**:
-  - **Status Up/Down**: `time() - container_last_seen{name=~".+"} < 30`
-  - **CPU %**: `sum(rate(container_cpu_usage_seconds_total{name=~"$container"}[1m])) by (name) * 100`
-  - **Memoria RAM**: `container_memory_working_set_bytes{name=~"$container"}`
+- **Labels do Coolify disponiveis (via cAdvisor)**:
+  - `container_label_coolify_projectName`: Nome do projeto no Coolify (ex: `curuja-tech`)
+  - `container_label_coolify_resourceName`: Nome do recurso/aplicacao (ex: `curuja-tech-web`)
+  - `container_label_coolify_serviceName`: Nome do servico
+  - `container_label_coolify_environmentName`: Ambiente (ex: `production`)
+- **Golden Metrics por projeto/container**:
+  - **Status Up/Down (Faixa no State Timeline)**:
+    `max by (container_label_coolify_projectName, container_label_coolify_resourceName) ((time() - container_last_seen{container_label_coolify_projectName=~".+"} < 30) * 1)`
+  - **CPU % por aplicacao**:
+    `sum(rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=~".+"}[1m])) by (container_label_coolify_projectName, container_label_coolify_resourceName) * 100`
+  - **Memoria RAM**:
+    `sum(container_memory_working_set_bytes{container_label_coolify_projectName=~".+"}) by (container_label_coolify_projectName, container_label_coolify_resourceName)`
   - **I/O Disco (Bytes lidos/escritos)**: `sum(rate(container_fs_reads_bytes_total{name=~"$container"}[1m]) + rate(container_fs_writes_bytes_total{name=~"$container"}[1m])) by (name)`
   - **Trafego de Rede**: `sum(rate(container_network_receive_bytes_total{name=~"$container"}[1m])) by (name)`
