@@ -47,6 +47,10 @@ services:
     privileged: true
     devices:
       - /dev/kmsg
+    command:
+      - '--docker_only=true'
+      - '--housekeeping_interval=10s'
+      - '--whitelisted_container_labels=coolify.name,coolify.applicationUuid,coolify.projectUuid,coolify.environmentName,coolify.projectName,coolify.serviceName'
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
