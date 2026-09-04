@@ -54,11 +54,16 @@ O projeto permite subir e gerenciar de ponta a ponta um ambiente pronto para pro
     │   ├── coolify.sql             # Dump de banco para restauração/backup do Coolify
     │   └── coolify-backup.tar.gz   # Backup compactado dos dados do Coolify
     │
-    └── cliproxy/
-        ├── docker-compose.yml      # Subida do CLI Proxy API integrado ao ambiente
-        ├── config.yaml             # Configurações ativas do CLI Proxy
-        └── config.example.yaml     # Exemplo de configuração
-```
+    ├── cliproxy/
+    │   ├── docker-compose.yml      # Subida do CLI Proxy API integrado ao ambiente
+    │   ├── config.yaml             # Configurações ativas do CLI Proxy
+    │   └── config.example.yaml     # Exemplo de configuração
+    │
+    └── observabilidade/
+         ├── docker-compose.yml      # Compose customizado de Prometheus + Grafana com limites de storage
+         ├── prometheus.yml          # Configuração de targets/scrape do Prometheus
+         └── observabilidade.md      # Guia e anotações sobre a stack de monitoramento
+    ```
 
 ---
 
