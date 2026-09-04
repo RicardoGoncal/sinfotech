@@ -25,6 +25,8 @@ A principal causa de falha em stacks de monitoramento e o crescimento continuo d
 - **`docker-compose.yml`**:
   - **Prometheus**: usa a imagem oficial `prom/prometheus:latest` (sem build, sem Dockerfile), com os limites de retencao acima e volume nomeado persistente para dados (`prometheus-data`). O arquivo de config e montado via **bind mount de caminho absoluto no host** (ver secao seguinte) — NAO via volume nomeado nem via caminho relativo do repositorio.
   - **Grafana**: painel de dashboards e alertas, integrado na mesma rede Docker interna e preparado para receber dominio com SSL pelo Coolify.
+  - **Node Exporter**: coleta metricas do host/servidor OCI (CPU geral, RAM, Disco, IOPS, Carga, Rede da VM).
+  - **cAdvisor**: coleta metricas de conteineres Docker do Coolify (CPU, RAM, Disco e Rede por container/projeto).
 - **`prometheus.yml`** (nesta pasta, no git): copia de referencia dos alvos de coleta (*scrape*). Serve como fonte da verdade para copiar manualmente para o servidor (ver abaixo) — **o container NAO le este arquivo diretamente do checkout do git**.
 
 ---
@@ -54,6 +56,14 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
 ```
 
 Salve (`Ctrl+O`, `Enter`, `Ctrl+X`) e proteja o arquivo:
@@ -116,3 +126,26 @@ Como o config NAO vem mais do build/git, editar so o `prometheus.yml` desta past
    docker exec prometheus wget -qO- --post-data='' http://localhost:9090/-/reload
    ```
    Ou, se preferir garantir 100%, reinicie o container pelo Coolify (botao **Restart** no recurso do Prometheus).
+
+---
+
+## Dashboards Prontos no Grafana
+
+Para importar no Grafana: va em **Dashboards** > **New** > **Import**, informe o ID e clique em **Load**.
+
+### 1. Dashboard da VM Oracle Cloud (Host)
+- **ID sugerido**: `1860` (Node Exporter Full)
+- **O que monitora**:
+  - Consumo geral de CPU (% e por core da VM ARM/Ampere)
+  - Memoria RAM total, em uso, livre, cache e swap
+  - Espaco livre e uso de disco (particoes / e block storage)
+  - IOPS de disco e tráfego de rede da VM
+
+### 2. Dashboard de Containers e Projetos do Coolify
+- **ID sugerido**: `14282` ou `893` (Docker cAdvisor)
+- **Golden Metrics por container**:
+  - **Status Up/Down**: `time() - container_last_seen{name=~".+"} < 30`
+  - **CPU %**: `sum(rate(container_cpu_usage_seconds_total{name=~"$container"}[1m])) by (name) * 100`
+  - **Memoria RAM**: `container_memory_working_set_bytes{name=~"$container"}`
+  - **I/O Disco (Bytes lidos/escritos)**: `sum(rate(container_fs_reads_bytes_total{name=~"$container"}[1m]) + rate(container_fs_writes_bytes_total{name=~"$container"}[1m])) by (name)`
+  - **Trafego de Rede**: `sum(rate(container_network_receive_bytes_total{name=~"$container"}[1m])) by (name)`
